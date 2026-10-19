@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A magical, interactive birthday surprise — made just for you." />
+  <title>Happy Birthday! 🎂 A Surprise For You</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       BACKGROUND LAYERS
+       1) canvas #bg-canvas  → floating balloons + fireworks (script.js)
+       2) glow orbs         → soft blurred color clouds for depth
+       Confetti (canvas-confetti library) draws on its own canvas.
+       ============================================================ -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="glow-orbs" aria-hidden="true">
+    <span class="orb orb--pink"></span>
+    <span class="orb orb--purple"></span>
+    <span class="orb orb--gold"></span>
+  </div>
+
+  <!-- ============================================================
+       HEADER CONTROLS
+       ============================================================ -->
+  <header class="topbar">
+    <span class="topbar__brand">✨ For You</span>
+    <button id="sound-toggle" class="icon-btn" aria-label="Toggle sound" title="Toggle sound">
+      <span class="icon-btn__on">🔊</span>
+      <span class="icon-btn__off">🔇</span>
+    </button>
+  </header>
+
+  <!-- ============================================================
+       SLIDE DECK  (single-page "sections" that transition in/out)
+       ============================================================ -->
+  <main class="deck" id="deck">
+
+    <!-- ---------- SLIDE 1 · HERO ---------- -->
+    <section class="slide slide--hero is-active" id="slide-1" aria-label="Welcome">
+      <div class="slide__inner">
+        <p class="eyebrow anim">A little surprise, just for you</p>
+        <h1 class="glow-title anim">
+          Happy<br /><span class="gradient-text">Birthday!</span>
+        </h1>
+        <p class="subtitle anim">
+          Today is entirely about <strong>you</strong>, so sit back,
+          follow the sparkle, and let the celebration begin.
+        </p>
+        <button class="btn btn--primary anim" data-goto="2">
+          Open Your Surprise ✨
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ---------- SLIDE 2 · THE PLAYFUL QUESTION ---------- -->
+    <section class="slide slide--question" id="slide-2" aria-label="A quick question">
+      <div class="slide__inner">
+        <h2 class="section-title anim">Are you excited<br />for your birthday?!</h2>
+        <p class="subtitle anim">Choose wisely… 😌</p>
+
+        <div class="btn-group anim">
+          <button class="btn btn--yes" id="yes-btn">Yes 😍</button>
+          <!-- The No button runs away. Good luck. 😈 -->
+          <button class="btn btn--no" id="no-btn">No 🙈</button>
+        </div>
+
+        <p class="hint" id="hint" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ---------- SLIDE 3 · MEMORY LANE / PHOTO GALLERY ---------- -->
+    <section class="slide slide--gallery" id="slide-3" aria-label="Memory lane">
+      <div class="slide__inner slide__inner--wide">
+        <p class="eyebrow anim">Memory Lane</p>
+        <h2 class="section-title anim">A Few Of My Favourite Moments</h2>
+
+        <!-- ============================================================
+             📸 PHOTO GALLERY
+             Each .memory card below is a placeholder.
+             TO ADD A REAL PHOTO:
+               1. Drop your image next to index.html (e.g. "photo1.jpg").
+               2. Inside the card, delete the <div class="photo-placeholder">
+                  and uncomment the <img> line, setting your file name.
+             Cards are also added dynamically by script.js from the
+             PHOTOS array — you can add/edit entries there too.
+             ============================================================ -->
+        <div class="gallery anim">
+          <button class="gallery__arrow gallery__arrow--prev" id="gallery-prev" aria-label="Previous photo">‹</button>
+
+          <div class="gallery__track" id="gallery-track" tabindex="0" aria-label="Photo carousel">
+            <!-- ---------- CARD 1 ---------- -->
+            <article class="memory">
+              <div class="memory__frame">
+                <!-- Insert your photo here: -->
+                <img src="photo1.jpeg" alt="A happy memory" />
+               
+           
+              </div>
+              <h3 class="memory__title">Where It All Began</h3>
+            </article>
+
+            <!-- ---------- CARD 2 ---------- -->
+            <article class="memory">
+              <div class="memory__frame">
+                <!-- Insert your photo here: -->
+                <img src="photo2.jpeg" alt="A happy memory" />
+               
+             
+              </div>
+              <h3 class="memory__title">That Unforgettable Day</h3>
+            </article>
+
+            <!-- ---------- CARD 3 ---------- -->
+            <article class="memory">
+              <div class="memory__frame">
+                <!-- Insert your photo here: -->
+                <img src="photo3.jpeg" alt="A happy memory" />
+               
+                
+              </div>
+              <h3 class="memory__title">Pure Chaos, Pure Joy</h3>
+            </article>
+
+            <!-- ---------- CARD 4 ---------- -->
+            <article class="memory">
+              <div class="memory__frame">
+                <!-- Insert your photo here: -->
+                <img src="photo4.jpeg" alt="A happy memory" />
+               
+               
+              </div>
+              <h3 class="memory__title">One For The Hall Of Fame</h3>
+            </article>
+          </div>
+
+          <button class="gallery__arrow gallery__arrow--next" id="gallery-next" aria-label="Next photo">›</button>
+        </div>
+
+        <div class="gallery__dots" id="gallery-dots" aria-hidden="true"></div>
+
+        <button class="btn btn--ghost anim" data-goto="4">There's more… 💜</button>
+      </div>
+    </section>
+
+    <!-- ---------- SLIDE 4 · THE LETTER (typing animation) ---------- -->
+    <section class="slide slide--message" id="slide-4" aria-label="A letter for you">
+      <div class="slide__inner">
+        <div class="letter anim">
+          <div class="letter__seal" aria-hidden="true">💌</div>
+          <h2 class="letter__heading">A Note For You</h2>
+          <p class="letter__text">
+            <span id="typed-text"></span><span class="letter__cursor" id="typed-cursor" aria-hidden="true"></span>
+          </p>
+          <p class="letter__skip" id="letter-skip">click anywhere to read it all at once</p>
+        </div>
+
+        <button class="btn btn--primary anim" data-goto="5" id="to-cake-btn" hidden>
+          A tiny challenge… 🧩
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- SLIDE 5 · CROSSWORD ---------- -->
+    <section class="slide slide--crossword" id="slide-5" aria-label="Birthday crossword">
+      <div class="slide__inner slide__inner--wide">
+        <p class="eyebrow anim">One Last Challenge</p>
+        <h2 class="section-title anim">The <span class="gradient-text">21st</span> Birthday Crossword</h2>
+        <p class="subtitle anim">Tap a square and start typing the clues are your best friend.</p>
+
+        <div class="crossword anim">
+          <div class="crossword__board">
+            <!-- Grid is generated by script.js from the CW data block -->
+            <div class="cw-grid" id="cw-grid" role="group" aria-label="Crossword grid"></div>
+            <p class="cw-status" id="cw-status" aria-live="polite">0 / 10 words</p>
+          </div>
+
+          <div class="crossword__clues">
+            <h3 class="cw-clues__title">Across</h3>
+            <ul class="cw-clues__list" id="cw-across"></ul>
+            <h3 class="cw-clues__title">Down</h3>
+            <ul class="cw-clues__list" id="cw-down"></ul>
+          </div>
+        </div>
+
+        <div class="cw-toolbar anim">
+          <button class="btn btn--ghost btn--small" id="cw-check" type="button">Check ✓</button>
+          <button class="btn btn--ghost btn--small" id="cw-clear" type="button">Clear ↺</button>
+          <button class="btn btn--ghost btn--small" id="cw-reveal" type="button">Reveal answers</button>
+        </div>
+
+        <div class="cw-win anim" id="cw-win" hidden>
+          <p class="cw-win__text">You spelled it! <strong id="cw-win-name">MEEKIE</strong> is officially 21 🥳</p>
+        </div>
+
+        <div class="cw-actions anim">
+          <button class="btn btn--primary" id="cw-next" data-goto="6" hidden>Make a wish 🎂</button>
+          <button class="btn btn--ghost btn--small" id="cw-skip" data-goto="6">Skip to the cake →</button>
+        </div>
+
+        <!-- Off-screen input so mobile keyboards can type into the grid -->
+        <input
+          id="cw-input"
+          class="cw-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          aria-hidden="true"
+          tabindex="-1"
+        />
+      </div>
+    </section>
+
+    <!-- ---------- SLIDE 6 · THE CAKE FINALE ---------- -->
+    <section class="slide slide--cake" id="slide-6" aria-label="Make a wish">
+      <div class="slide__inner">
+        <h2 class="section-title anim">Make a wish &amp; blow out the candles!</h2>
+        <p class="subtitle anim" id="cake-subtitle">Tap each flame 🕯️</p>
+
+        <!-- Birthday cake — candles are generated by script.js -->
+        <div class="cake anim" id="cake">
+          <svg viewBox="0 0 400 390" role="img" aria-label="A birthday cake with lit candles">
+            <defs>
+              <linearGradient id="tierTop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffe8a3" />
+                <stop offset="1" stop-color="#ffd166" />
+              </linearGradient>
+              <linearGradient id="tierMid" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ff8fab" />
+                <stop offset="1" stop-color="#ff5d8f" />
+              </linearGradient>
+              <linearGradient id="tierBot" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#c77dff" />
+                <stop offset="1" stop-color="#a06cd5" />
+              </linearGradient>
+              <linearGradient id="plateGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#8e7bb8" />
+                <stop offset="0.5" stop-color="#e6dcff" />
+                <stop offset="1" stop-color="#8e7bb8" />
+              </linearGradient>
+            </defs>
+
+            <!-- candles injected here -->
+            <g id="candles"></g>
+
+            <!-- top tier -->
+            <rect x="130" y="128" width="140" height="66" rx="10" fill="url(#tierTop)" />
+            <rect x="124" y="118" width="152" height="26" rx="13" fill="#fff6fb" />
+            <circle cx="140" cy="144" r="4" fill="#ff5d8f" />
+            <circle cx="175" cy="158" r="4" fill="#a06cd5" />
+            <circle cx="215" cy="146" r="4" fill="#7bdff2" />
+            <circle cx="252" cy="160" r="4" fill="#ff5d8f" />
+
+            <!-- middle tier -->
+            <rect x="100" y="188" width="200" height="72" rx="12" fill="url(#tierMid)" />
+            <rect x="93" y="178" width="214" height="26" rx="13" fill="#fff6fb" />
+            <circle cx="118" cy="214" r="4" fill="#ffd166" />
+            <circle cx="160" cy="230" r="4" fill="#7bdff2" />
+            <circle cx="205" cy="216" r="4" fill="#ffd166" />
+            <circle cx="250" cy="232" r="4" fill="#c77dff" />
+            <circle cx="285" cy="218" r="4" fill="#7bdff2" />
+
+            <!-- bottom tier -->
+            <rect x="66" y="256" width="268" height="90" rx="14" fill="url(#tierBot)" />
+            <rect x="58" y="246" width="284" height="28" rx="14" fill="#fff6fb" />
+            <circle cx="86" cy="292" r="4" fill="#ffd166" />
+            <circle cx="130" cy="312" r="4" fill="#ff8fab" />
+            <circle cx="180" cy="294" r="4" fill="#7bdff2" />
+            <circle cx="230" cy="314" r="4" fill="#ffd166" />
+            <circle cx="280" cy="296" r="4" fill="#ff8fab" />
+            <circle cx="318" cy="316" r="4" fill="#7bdff2" />
+
+            <!-- plate -->
+            <ellipse cx="200" cy="352" rx="176" ry="17" fill="url(#plateGrad)" />
+            <ellipse cx="200" cy="348" rx="150" ry="11" fill="#f3ecff" opacity="0.85" />
+          </svg>
+        </div>
+
+        <div class="finale" id="finale" hidden>
+          <h3 class="glow-title glow-title--small">Wish granted 🎉</h3>
+          <p class="subtitle">Hope this year brings you everything you're hoping for and more.</p>
+          <button class="btn btn--ghost" id="replay-btn">↻ Relive the surprise</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       SLIDE NAVIGATION · dot pager (right side) + arrows
+       ============================================================ -->
+  <nav class="dots" id="dots" aria-label="Slide navigation"></nav>
+
+  <button class="nav-arrow nav-arrow--prev" id="prev-slide" aria-label="Previous section">‹</button>
+  <button class="nav-arrow nav-arrow--next" id="next-slide" aria-label="Next section">›</button>
+
+  <!-- canvas-confetti (lightweight confetti library via CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Main script -->
+  <script src="script.js"></script>
+</body>
+</html>
